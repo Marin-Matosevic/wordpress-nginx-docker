@@ -45,13 +45,20 @@ services:
       - WORDPRESS_DB_USER=${WORDPRESS_DB_USER:-root}
       - WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD:-password}
 
-  adminer:
-    image: adminer
-    restart: always
-    links:
-      - mysql
+  # http://127.0.0.1:8080/
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: ${APP_NAME}-phpmyadmin
+    volumes:
+      - ./config/phpmyadmin.ini:/usr/local/etc/php/conf.d/phpmyadmin.ini
+    environment:
+      PMA_HOST: '${WORDPRESS_DB_HOST}'
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
     ports:
-      - 8080:8080
+      - '8080:80'
+    links:
+      - mysql:mysql
 
 volumes:
   db_data: {}
